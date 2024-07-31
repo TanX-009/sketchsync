@@ -16,6 +16,7 @@ import { IoTriangleSharp } from "react-icons/io5";
 import ImageUpload from "./components/ImageUpload";
 import { FaRedo, FaUndoAlt } from "react-icons/fa";
 import { TBoardActions } from "@/app/page";
+import ThemeButton from "./components/ThemeButton";
 
 interface TProps {
   boardActions: TBoardActions;
@@ -40,6 +41,7 @@ export default function ToolBar({ boardActions }: TProps) {
           <Button.LowContrast onClick={boardActions.clear}>
             <FaTrash />
           </Button.LowContrast>
+          <ThemeButton />
         </div>
       </Panel>
     </div>

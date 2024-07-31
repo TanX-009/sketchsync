@@ -34,6 +34,7 @@ export default function WidthSelector() {
         variants={{
           open: {
             width: "fit-content",
+            display: "flex",
             opacity: 1,
             padding: "0 var(--sp-3xs)",
             transition: {
@@ -46,6 +47,7 @@ export default function WidthSelector() {
           },
           closed: {
             width: 0,
+            display: "none",
             opacity: 0,
             padding: "0 0",
             transition: {

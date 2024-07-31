@@ -2,9 +2,11 @@
 
 import React, { Component, createContext } from "react";
 import generateRoomCode from "../generateRoomCode";
+import { Session } from "next-auth";
 
 interface TProps {
   readonly children: React.ReactNode;
+  session: Session | null;
 }
 interface TState {
   primary: string;
@@ -24,27 +26,19 @@ const UContext = createContext<TContext | null>(null);
 class UserContext extends Component<TProps, TState> {
   constructor(props: TProps) {
     super(props);
+    let user = "Guest";
+    if (props.session && typeof props.session?.user?.name === "string") {
+      user = props.session.user.name;
+    }
     this.state = {
-      primary: "#ffffff",
-      currentColor: "#ffffff",
+      primary: "grey",
+      currentColor: "grey",
       currentWidth: 10,
-      user: "Guest" + Math.floor(Math.random() * 1000),
-      roomCode: "",
+      user: user,
+      roomCode: generateRoomCode(),
     };
   }
 
-  componentDidMount(): void {
-    const primaryVar = getComputedStyle(document.body).getPropertyValue(
-      "--primary",
-    );
-    this.setState({
-      ...this.state,
-      primary: primaryVar,
-      currentColor: primaryVar,
-      roomCode: "asdf",
-      //roomCode: generateRoomCode(),
-    });
-  }
   render() {
     const { children } = this.props;
     return (

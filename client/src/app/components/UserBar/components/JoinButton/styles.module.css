@@ -1,0 +1,20 @@
+.joinButton {
+  display: flex;
+  align-items: center;
+  background: var(--primary);
+  border-radius: var(--radius);
+}
+
+.codeInput {
+  padding: var(--sp-3xs);
+
+  font-size: inherit;
+  text-align: center;
+
+  border: var(--border) solid var(--primary);
+  outline: none;
+  border-radius: var(--radius);
+
+  background: var(--primaryContainer);
+  color: var(--primary);
+}

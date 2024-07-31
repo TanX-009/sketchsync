@@ -7,6 +7,8 @@ import "../styles/utopia.step.css";
 import "../styles/variables.css";
 import "../styles/globals.css";
 import UserContext from "@/components/lib/UserContext";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 interface TProps {
   readonly children: ReactNode;
@@ -19,11 +21,12 @@ export const metadata: Metadata = {
   description: "Real-time collaborative whiteboard.",
 };
 
-export default function RootLayout({ children }: TProps) {
+export default async function RootLayout({ children }: TProps) {
+  const session = await getServerSession(authOptions);
   return (
     <html lang="en">
       <body className={inter.className}>
-        <UserContext>{children}</UserContext>
+        <UserContext session={session}>{children}</UserContext>
       </body>
     </html>
   );
