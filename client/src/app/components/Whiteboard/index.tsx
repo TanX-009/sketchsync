@@ -15,10 +15,11 @@ import { TAction, TDrawing, TImage } from "./types";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import Panel from "@/components/ui/Panel";
 import generateRoomCode from "@/components/lib/generateRoomCode";
+import { TBoardActions } from "@/app/page";
 
 const socket = io("http://192.168.1.10:4000"); // Adjust the URL as needed
 
-export default function Whiteboard() {
+export default function Whiteboard({ setBoardActions }: any) {
   const [actions, setActions] = useState<TAction[]>([]);
   const [connected, setConnected] = useState<boolean>(false);
 
@@ -38,7 +39,6 @@ export default function Whiteboard() {
       ]);
     }
   }, [whiteboardRef]);
-  console.log("canvasSize", canvasSize);
 
   // █▀█ █▀▀ █▀ █ ▀█ █▀▀
   // █▀▄ ██▄ ▄█ █ █▄ ██▄
@@ -57,6 +57,8 @@ export default function Whiteboard() {
     };
   });
 
+  // ░░█ █▀█ █ █▄░█   █▀█ █▀█ █▀█ █▀▄▀█
+  // █▄█ █▄█ █ █░▀█   █▀▄ █▄█ █▄█ █░▀░█
   useEffect(() => {
     socket.emit("joinRoom", context.roomCode);
   }, [context.roomCode]);
@@ -145,11 +147,15 @@ export default function Whiteboard() {
 
   // ▄▀█ █▀▀ ▀█▀ █ █▀█ █▄░█ █▀
   // █▀█ █▄▄ ░█░ █ █▄█ █░▀█ ▄█
-  const undo = () => {};
-  const redo = () => {};
-  const clear = () => {
-    setActions(actions.filter((action) => action.user === context.user));
-  };
+  useEffect(() => {
+    console.log("asfdasdfsadfadfs");
+    const undo = () => {};
+    const redo = () => {};
+    const clear = () => {
+      setActions(actions.filter((action) => action.user === context.user));
+    };
+    setBoardActions({ undo, redo, clear });
+  }, []);
 
   if (connected) {
     return (

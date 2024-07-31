@@ -28,7 +28,7 @@ class UserContext extends Component<TProps, TState> {
       primary: "#ffffff",
       currentColor: "#ffffff",
       currentWidth: 10,
-      user: "Guest",
+      user: "Guest" + Math.floor(Math.random() * 1000),
       roomCode: "",
     };
   }

@@ -15,8 +15,13 @@ import WidthSelector from "./components/WidthSelector";
 import { IoTriangleSharp } from "react-icons/io5";
 import ImageUpload from "./components/ImageUpload";
 import { FaRedo, FaUndoAlt } from "react-icons/fa";
+import { TBoardActions } from "@/app/page";
 
-export default function ToolBar() {
+interface TProps {
+  boardActions: TBoardActions;
+}
+
+export default function ToolBar({ boardActions }: TProps) {
   return (
     <div className={styles.toolbar}>
       <Panel className={styles.panel}>
@@ -32,7 +37,7 @@ export default function ToolBar() {
           <Button.LowContrast>
             <FaRedo />
           </Button.LowContrast>
-          <Button.LowContrast>
+          <Button.LowContrast onClick={boardActions.clear}>
             <FaTrash />
           </Button.LowContrast>
         </div>
