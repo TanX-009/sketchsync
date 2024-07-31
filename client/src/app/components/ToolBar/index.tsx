@@ -31,10 +31,10 @@ export default function ToolBar({ boardActions }: TProps) {
           <ImageUpload />
         </div>
         <div>
-          <Button.LowContrast>
+          <Button.LowContrast onClick={boardActions.undo}>
             <FaUndoAlt />
           </Button.LowContrast>
-          <Button.LowContrast>
+          <Button.LowContrast onClick={boardActions.redo}>
             <FaRedo />
           </Button.LowContrast>
           <Button.LowContrast onClick={boardActions.clear}>

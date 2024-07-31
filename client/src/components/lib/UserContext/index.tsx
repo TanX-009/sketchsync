@@ -41,7 +41,8 @@ class UserContext extends Component<TProps, TState> {
       ...this.state,
       primary: primaryVar,
       currentColor: primaryVar,
-      roomCode: generateRoomCode(),
+      roomCode: "asdf",
+      //roomCode: generateRoomCode(),
     });
   }
   render() {

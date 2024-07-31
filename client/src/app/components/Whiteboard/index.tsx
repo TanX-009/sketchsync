@@ -19,8 +19,13 @@ import { TBoardActions } from "@/app/page";
 
 const socket = io("http://192.168.1.10:4000"); // Adjust the URL as needed
 
-export default function Whiteboard({ setBoardActions }: any) {
+interface TProps {
+  setBoardActions: Function;
+}
+
+export default function Whiteboard({ setBoardActions }: TProps) {
   const [actions, setActions] = useState<TAction[]>([]);
+  const [undoneActions, setUndoneActions] = useState<TAction[]>([]);
   const [connected, setConnected] = useState<boolean>(false);
 
   const isMoving = useRef(false);
@@ -67,7 +72,7 @@ export default function Whiteboard({ setBoardActions }: any) {
   // █▀█ █ ▄█ ░█░ █▄█ █▀▄ ░█░
   useEffect(() => {
     socket.on("history", (history) => {
-      // To-do: Handle history
+      setActions(history);
       setConnected(true);
     });
 
@@ -80,9 +85,13 @@ export default function Whiteboard({ setBoardActions }: any) {
     socket.on("action", (action: TAction) => {
       setActions((prevActions) => [...prevActions, action]);
     });
+    socket.on("update", (actions: TAction[]) => {
+      setActions(actions);
+    });
 
     return () => {
       socket.off("action");
+      socket.off("update");
     };
   }, []);
 
@@ -92,6 +101,9 @@ export default function Whiteboard({ setBoardActions }: any) {
 
   const handleMouseDown = () => {
     isMoving.current = true;
+
+    // reset undoneActions
+    setUndoneActions([]);
 
     const newLine: TDrawing = {
       points: [],
@@ -127,7 +139,8 @@ export default function Whiteboard({ setBoardActions }: any) {
     if (currentLine) {
       // Create action data
       const actionData: TAction = {
-        user: "currentUser", // Replace with actual user identifier
+        user: context.user, // Replace with actual user identifier
+        roomCode: context.roomCode,
         type: "drawing",
         payload: currentLine,
       };
@@ -148,14 +161,41 @@ export default function Whiteboard({ setBoardActions }: any) {
   // ▄▀█ █▀▀ ▀█▀ █ █▀█ █▄░█ █▀
   // █▀█ █▄▄ ░█░ █ █▄█ █░▀█ ▄█
   useEffect(() => {
-    console.log("asfdasdfsadfadfs");
-    const undo = () => {};
-    const redo = () => {};
-    const clear = () => {
-      setActions(actions.filter((action) => action.user === context.user));
+    const undo = () => {
+      if (actions.length === 0) return;
+
+      const lastAction = actions[actions.length - 1];
+      if (lastAction.user === context.user) {
+        const newActions = actions.slice(0, actions.length - 1);
+        setUndoneActions([lastAction, ...undoneActions]);
+        socket.emit("update", newActions);
+        setActions(newActions);
+      }
     };
+
+    const redo = () => {
+      if (undoneActions.length === 0) return;
+
+      const firstUndoneAction = undoneActions[0];
+      if (firstUndoneAction.user === context.user) {
+        const newActions = [...actions, firstUndoneAction];
+        const newUndoneActions = undoneActions.slice(1);
+        setUndoneActions(newUndoneActions);
+        socket.emit("update", newActions);
+        setActions(newActions);
+      }
+    };
+
+    const clear = () => {
+      const filteredActions = actions.filter(
+        (action: TAction) => action.user !== context.user,
+      );
+      socket.emit("update", filteredActions);
+      setActions(filteredActions);
+    };
+
     setBoardActions({ undo, redo, clear });
-  }, []);
+  }, [actions, context.user, setBoardActions, undoneActions]);
 
   if (connected) {
     return (

@@ -12,12 +12,14 @@ export interface TImage {
 
 export interface TActionDrawing {
   user: string;
+  roomCode: string;
   type: "drawing";
   payload: TDrawing;
 }
 
 export interface TActionImage {
   user: string;
+  roomCode: string;
   type: "image";
   payload: TImage;
 }

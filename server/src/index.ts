@@ -46,6 +46,15 @@ io.on("connection", async (socket) => {
 
   socket.on("action", (data) => {
     socket.broadcast.emit("action", data);
+    if (roomsData[data.roomCode] === undefined) roomsData[data.roomCode] = [];
+    roomsData[data.roomCode].push(data);
+  });
+
+  socket.on("update", (data) => {
+    console.log(data);
+    socket.broadcast.emit("update", data);
+    if (roomsData[data.roomCode] === undefined) roomsData[data.roomCode] = [];
+    roomsData[data.room] = data;
   });
 
   socket.on("disconnect", () => {
