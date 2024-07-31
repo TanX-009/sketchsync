@@ -11,11 +11,12 @@ import Konva from "konva";
 import { Stage, Layer, Line, Image, Transformer } from "react-konva";
 import io from "socket.io-client";
 import styles from "./styles.module.css";
-import { TAction, TDrawing, TImage } from "./types";
+import { TAction, TCursorLocation, TCursors, TDrawing, TImage } from "./types";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import Panel from "@/components/ui/Panel";
 import generateRoomCode from "@/components/lib/generateRoomCode";
 import { TBoardActions } from "@/app/page";
+import Cursor from "./components/Cursor";
 
 const socket = io("http://192.168.1.10:4000"); // Adjust the URL as needed
 
@@ -26,7 +27,8 @@ interface TProps {
 export default function Whiteboard({ setBoardActions }: TProps) {
   const [actions, setActions] = useState<TAction[]>([]);
   const [undoneActions, setUndoneActions] = useState<TAction[]>([]);
-  const [connected, setConnected] = useState<boolean>(false);
+
+  const [cursors, setCursors] = useState<TCursors>({});
 
   const isMoving = useRef(false);
   const whiteboardRef = useRef<HTMLDivElement>(null);
@@ -73,7 +75,6 @@ export default function Whiteboard({ setBoardActions }: TProps) {
   useEffect(() => {
     socket.on("history", (history) => {
       setActions(history);
-      setConnected(true);
     });
 
     return () => {
@@ -88,10 +89,16 @@ export default function Whiteboard({ setBoardActions }: TProps) {
     socket.on("update", (actions: TAction[]) => {
       setActions(actions);
     });
-
+    socket.on("cursorMove", (cursorLocation: TCursorLocation) => {
+      setCursors((prevCursors) => ({
+        ...prevCursors,
+        [cursorLocation.user]: cursorLocation,
+      }));
+    });
     return () => {
       socket.off("action");
       socket.off("update");
+      socket.off("cursorMove");
     };
   }, []);
 
@@ -115,13 +122,21 @@ export default function Whiteboard({ setBoardActions }: TProps) {
   };
 
   const handleMouseMove = (e: any) => {
-    if (!isMoving.current || !currentLine) {
-      return;
-    }
     e.evt.preventDefault();
 
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
+    const cursorLocation: TCursorLocation = {
+      x: point.x,
+      y: point.y,
+      user: context.user,
+    };
+
+    socket.emit("cursorMove", cursorLocation);
+
+    if (!isMoving.current || !currentLine) {
+      return;
+    }
 
     setCurrentLine((prevLine) => {
       if (prevLine) {
@@ -197,7 +212,7 @@ export default function Whiteboard({ setBoardActions }: TProps) {
     setBoardActions({ undo, redo, clear });
   }, [actions, context.user, setBoardActions, undoneActions]);
 
-  if (connected) {
+  if (socket.connected) {
     return (
       <Panel ref={whiteboardRef} className={styles.whiteboard}>
         <Stage
@@ -241,7 +256,10 @@ export default function Whiteboard({ setBoardActions }: TProps) {
             )}
           </Layer>
         </Stage>
+        {Object.keys(cursors).map((key) => (
+          <Cursor key={key} cursorLocation={cursors[key]} />
+        ))}
       </Panel>
     );
-  } else return <Panel ref={whiteboardRef}>Loading...</Panel>;
+  } else return <Panel ref={whiteboardRef}>Connecting...</Panel>;
 }

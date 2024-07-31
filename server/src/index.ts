@@ -10,7 +10,7 @@ app.use(cors()); // Enable CORS for all routes
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000", // Allow only your frontend to access the server
+    origin: ["http://localhost:3000", "http://192.168.1.10:3000"], // Allow only your frontend to access the server
     methods: ["GET", "POST"],
   },
 });
@@ -18,7 +18,6 @@ let roomsData = {} as any;
 
 io.on("connection", async (socket) => {
   console.log("a user connected");
-  //console.log(await checkDatabase("record"));
 
   socket.on("joinRoom", (room) => {
     socket.join(room);
@@ -51,10 +50,13 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("update", (data) => {
-    console.log(data);
     socket.broadcast.emit("update", data);
     if (roomsData[data.roomCode] === undefined) roomsData[data.roomCode] = [];
-    roomsData[data.room] = data;
+    roomsData[data.roomCode] = data;
+  });
+
+  socket.on("cursorMove", (location) => {
+    socket.broadcast.emit("cursorMove", location);
   });
 
   socket.on("disconnect", () => {

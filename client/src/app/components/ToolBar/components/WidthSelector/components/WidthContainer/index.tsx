@@ -22,14 +22,14 @@ export default function WidthContainer({ width, variants = null }: TProps) {
         className={styles.widthContainer}
         variants={variants}
         onClick={handleOnClick}
-        style={{ width: width, background: context.currentColor }}
-      ></motion.div>
+      >
+        <div style={{ width: width, background: context.currentColor }}></div>
+      </motion.div>
     );
   }
   return (
-    <div
-      className={styles.widthContainer}
-      style={{ width: width, background: context.currentColor }}
-    ></div>
+    <div className={styles.widthContainer}>
+      <div style={{ width: width, background: context.currentColor }}></div>
+    </div>
   );
 }

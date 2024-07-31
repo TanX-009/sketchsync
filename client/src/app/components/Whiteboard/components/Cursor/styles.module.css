@@ -1,0 +1,21 @@
+.cursor {
+  position: absolute;
+
+  pointer-events: none;
+}
+
+.pointer {
+  font-size: var(--sp-s);
+
+  position: absolute;
+  transform: translate(-50%, -50%);
+
+  color: var(--onSurface);
+}
+
+.name {
+  padding: var(--sp-5xs);
+
+  border-radius: var(--radius);
+  background: var(--primaryContainer);
+}

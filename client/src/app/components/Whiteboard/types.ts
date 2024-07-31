@@ -25,3 +25,13 @@ export interface TActionImage {
 }
 
 export type TAction = TActionDrawing | TActionImage;
+
+export interface TCursorLocation {
+  x: number;
+  y: number;
+  user: string;
+}
+
+export interface TCursors {
+  [user: string]: TCursorLocation;
+}
