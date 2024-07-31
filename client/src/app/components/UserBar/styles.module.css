@@ -1,0 +1,16 @@
+.userbar {
+  height: fit-content;
+  padding: var(--sp-3xs);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3xs);
+  flex-wrap: wrap;
+}
+
+.userbar > div {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5xs);
+}

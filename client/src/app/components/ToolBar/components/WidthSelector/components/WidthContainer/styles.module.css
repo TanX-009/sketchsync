@@ -1,0 +1,6 @@
+.widthContainer {
+  height: var(--sp-s);
+
+  border-radius: var(--sp-3xs);
+  background: var(--primary);
+}

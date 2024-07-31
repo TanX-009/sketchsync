@@ -1,0 +1,20 @@
+.colorSelector {
+  padding: var(--sp-5xs);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3xs);
+}
+
+.menu {
+  width: fit-content;
+  max-width: calc(100vw - var(--sp-3xs));
+  padding: 0 var(--sp-3xs);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3xs);
+  flex-wrap: wrap;
+}

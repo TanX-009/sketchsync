@@ -1,0 +1,26 @@
+.lowContrast {
+  padding: var(--sp-3xs);
+
+  font-size: inherit;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border: var(--border) solid transparent;
+  outline: none;
+  border-radius: var(--radius);
+
+  background: inherit;
+  color: var(--onSurface);
+}
+
+.lowContrast:hover {
+  background: inherit;
+  border: var(--border) solid var(--primaryContainer);
+}
+
+.lowContrast:active {
+  background: var(--surface);
+}

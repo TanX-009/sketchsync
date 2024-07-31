@@ -1,0 +1,23 @@
+.toolbar {
+  width: 100%;
+}
+
+.panel {
+  height: fit-content;
+  padding: var(--sp-3xs);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3xs);
+  flex-wrap: wrap;
+}
+
+.panel > div {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-5xs);
+}
