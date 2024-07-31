@@ -64,15 +64,10 @@ export default function Whiteboard({ setBoardActions }: TProps) {
     };
   });
 
-  // ░░█ █▀█ █ █▄░█   █▀█ █▀█ █▀█ █▀▄▀█
-  // █▄█ █▄█ █ █░▀█   █▀▄ █▄█ █▄█ █░▀░█
-  useEffect(() => {
-    socket.emit("joinRoom", context.roomCode);
-  }, [context.roomCode]);
-
   // █░█ █ █▀ ▀█▀ █▀█ █▀█ █▄█
   // █▀█ █ ▄█ ░█░ █▄█ █▀▄ ░█░
   useEffect(() => {
+    socket.emit("joinRoom", context.roomCode);
     socket.on("history", (history) => {
       setActions(history);
     });
@@ -80,7 +75,7 @@ export default function Whiteboard({ setBoardActions }: TProps) {
     return () => {
       socket.off("history");
     };
-  }, []);
+  }, [context.roomCode]);
 
   useEffect(() => {
     socket.on("action", (action: TAction) => {

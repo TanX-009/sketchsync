@@ -35,28 +35,20 @@ io.on("connection", async (socket) => {
     (socket as any).room = room;
   });
 
-  socket.on("drawing", (data) => {
-    const room = (socket as any).room;
-    if (room === undefined) {
-    }
-    socket.broadcast.emit("drawing", data.line);
-    //roomsData[room].push(data.line);
-  });
-
   socket.on("action", (data) => {
-    socket.broadcast.emit("action", data);
+    socket.broadcast.to(data.roomCode).emit("action", data);
     if (roomsData[data.roomCode] === undefined) roomsData[data.roomCode] = [];
     roomsData[data.roomCode].push(data);
   });
 
   socket.on("update", (data) => {
-    socket.broadcast.emit("update", data);
+    socket.broadcast.to(data.roomCode).emit("update", data);
     if (roomsData[data.roomCode] === undefined) roomsData[data.roomCode] = [];
     roomsData[data.roomCode] = data;
   });
 
   socket.on("cursorMove", (location) => {
-    socket.broadcast.emit("cursorMove", location);
+    socket.broadcast.to((socket as any).room).emit("cursorMove", location);
   });
 
   socket.on("disconnect", () => {

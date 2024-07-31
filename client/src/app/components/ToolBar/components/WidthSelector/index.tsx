@@ -11,10 +11,9 @@ const itemVariants: Variants = {
   open: {
     opacity: 1,
     x: 0,
-    y: 0,
     transition: { type: "spring", stiffness: 300, damping: 24 },
   },
-  closed: { opacity: 0, x: -10, y: 0, transition: { duration: 0.1 } },
+  closed: { opacity: 0, x: -10, transition: { duration: 0.1 } },
 };
 
 export default function WidthSelector() {
@@ -34,7 +33,9 @@ export default function WidthSelector() {
         className={styles.menu}
         variants={{
           open: {
-            display: "flex",
+            width: "fit-content",
+            opacity: 1,
+            padding: "0 var(--sp-3xs)",
             transition: {
               type: "spring",
               bounce: 0,
@@ -44,7 +45,9 @@ export default function WidthSelector() {
             },
           },
           closed: {
-            display: "none",
+            width: 0,
+            opacity: 0,
+            padding: "0 0",
             transition: {
               type: "spring",
               bounce: 0,
