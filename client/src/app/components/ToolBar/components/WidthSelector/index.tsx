@@ -20,11 +20,18 @@ export default function WidthSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const { context } = useContext(UContext) as TContext;
 
+  const handleClick = () => {
+    setIsOpen(true);
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 5000);
+  };
+
   return (
     <motion.div
       className={styles.widthSelector}
       initial={false}
-      onClick={() => setIsOpen(!isOpen)}
+      onClick={handleClick}
       animate={isOpen ? "open" : "closed"}
     >
       <FaPencil />

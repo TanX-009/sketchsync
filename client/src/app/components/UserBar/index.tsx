@@ -18,7 +18,7 @@ export default function UserBar() {
   }, [context.roomCode]);
 
   const handleCopy = () => {
-    if (navigator.clipboard) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText(context.roomCode)
         .then(() => {
@@ -32,7 +32,7 @@ export default function UserBar() {
           console.error("Failed to copy text: ", error);
         });
     } else {
-      console.error("Clipboard API isnot availabe!");
+      console.error("Clipboard API is not availabe!");
     }
   };
   return (

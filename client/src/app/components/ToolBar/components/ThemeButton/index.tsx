@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { FaMoon, FaSun } from "react-icons/fa6";
 
 export default function ThemeButton() {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
     const systemPrefersDark = window.matchMedia(
