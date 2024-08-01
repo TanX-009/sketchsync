@@ -5,7 +5,7 @@ import generateRoomCode from "../generateRoomCode";
 import { Session } from "next-auth";
 import io, { Socket } from "socket.io-client";
 
-const socket: Socket = io("http://192.168.1.10:4000"); // Adjust the URL as needed
+const socket: Socket = io(process.env.NEXT_PUBLIC_SERVER_API_URL); // Adjust the URL as needed
 
 interface TProps {
   readonly children: React.ReactNode;
@@ -44,6 +44,7 @@ class UserContext extends Component<TProps, TState> {
       currentWidth: 10,
       user: user,
       roomCode: generateRoomCode(),
+      //roomCode: "asdf",
       socket: socket,
     };
   }
