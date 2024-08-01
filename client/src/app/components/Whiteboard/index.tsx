@@ -11,12 +11,20 @@ import Konva from "konva";
 import { Stage, Layer, Line, Image, Transformer } from "react-konva";
 import io from "socket.io-client";
 import styles from "./styles.module.css";
-import { TAction, TCursorLocation, TCursors, TDrawing, TImage } from "./types";
+import {
+  TAction,
+  TActionImage,
+  TCursorLocation,
+  TCursors,
+  TDrawing,
+  TImage,
+} from "./types";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import Panel from "@/components/ui/Panel";
-import generateRoomCode from "@/components/lib/generateRoomCode";
 import { TBoardActions } from "@/app/page";
 import Cursor from "./components/Cursor";
+import useImage from "use-image";
+import URLImage from "./components/URLImage";
 
 const socket = io("http://192.168.1.10:4000"); // Adjust the URL as needed
 
@@ -35,6 +43,7 @@ export default function Whiteboard({ setBoardActions }: TProps) {
   const [canvasSize, setCanvasSize] = useState<Array<number>>([0, 0]);
 
   const { context, setContext } = useContext(UContext) as TContext;
+  console.log(actions);
 
   // █▀▀ ▄▀█ █▄░█ █░█ ▄▀█ █▀   █▀ █ ▀█ █▀▀
   // █▄▄ █▀█ █░▀█ ▀▄▀ █▀█ ▄█   ▄█ █ █▄ ██▄
@@ -78,7 +87,7 @@ export default function Whiteboard({ setBoardActions }: TProps) {
   }, [context.roomCode]);
 
   useEffect(() => {
-    socket.on("action", (action: TAction) => {
+    socket.on("action_StoC", (action: TAction) => {
       setActions((prevActions) => [...prevActions, action]);
     });
     socket.on("update", (actions: TAction[]) => {
@@ -159,13 +168,31 @@ export default function Whiteboard({ setBoardActions }: TProps) {
       setActions((prevActions) => [...prevActions, actionData]);
 
       // Emit action data
-      socket.emit("action", actionData);
+      socket.emit("action_CtoS", actionData);
 
       // Clear the currentLine
       setCurrentLine(null);
     }
 
     isMoving.current = false;
+  };
+  const handleImageTransform = (newData: TImage) => {
+    const updatedActions: TAction[] = actions.map((action: TAction) => {
+      if (action.type === "image" && action.payload.src === newData.src) {
+        return { ...action, latest: false } as TActionImage;
+      }
+      return action as TAction;
+    });
+
+    const newAction: TAction = {
+      user: context.user,
+      roomCode: context.roomCode,
+      latest: true,
+      type: "image",
+      payload: newData,
+    };
+    socket.emit("updateAction", newAction);
+    setActions([...updatedActions, newAction]);
   };
 
   // ▄▀█ █▀▀ ▀█▀ █ █▀█ █▄░█ █▀
@@ -204,7 +231,13 @@ export default function Whiteboard({ setBoardActions }: TProps) {
       setActions(filteredActions);
     };
 
-    setBoardActions({ undo, redo, clear });
+    const addImage = (imageAction: TActionImage) => {
+      const updatedActions = [...actions, imageAction];
+      socket.emit("update", updatedActions);
+      setActions(updatedActions);
+    };
+
+    setBoardActions({ undo, redo, clear, addImage });
   }, [actions, context.user, setBoardActions, undoneActions]);
 
   if (socket.connected) {
@@ -232,6 +265,14 @@ export default function Whiteboard({ setBoardActions }: TProps) {
                     tension={0.5}
                     lineCap="round"
                     globalCompositeOperation="source-over"
+                  />
+                );
+              } else if (action.type === "image" && action.latest) {
+                return (
+                  <URLImage
+                    key={i}
+                    data={action.payload}
+                    onTransform={handleImageTransform}
                   />
                 );
               }

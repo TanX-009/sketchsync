@@ -1,5 +1,4 @@
 import React, { MouseEventHandler, ReactNode } from "react";
-import styles from "./styles.module.css";
 
 interface TProps {
   children: ReactNode;
@@ -15,7 +14,7 @@ export default function HighContrast({
   return (
     <button
       type="button"
-      className={styles.highContrast + " " + className}
+      className={"highContrastClickable " + className}
       onClick={onClick}
     >
       {children}

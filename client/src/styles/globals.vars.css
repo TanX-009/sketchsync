@@ -1,0 +1,54 @@
+.highContrastClickable {
+  padding: var(--sp-3xs);
+
+  font-size: inherit;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: var(--border) solid transparent;
+  outline: none;
+  border-radius: var(--radius);
+
+  background: var(--primary);
+  color: var(--onPrimary);
+}
+
+.highContrastClickable:hover {
+  filter: brightness(95%);
+  -ms-filter: brightness(95%);
+  -webkit-filter: brightness(95%);
+}
+
+.highContrastClickable:active {
+  filter: brightness(90%);
+  -ms-filter: brightness(90%);
+  -webkit-filter: brightness(90%);
+}
+
+.lowContrastClickable {
+  padding: var(--sp-3xs);
+
+  font-size: inherit;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: var(--border) solid transparent;
+  outline: none;
+  border-radius: var(--radius);
+
+  background: inherit;
+  color: var(--onSurface);
+}
+
+.lowContrastClickable:hover {
+  background: inherit;
+  border: var(--border) solid var(--primaryContainer);
+}
+
+.lowContrastClickable:active {
+  background: var(--surface);
+}

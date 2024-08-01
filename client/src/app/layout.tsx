@@ -6,6 +6,8 @@ import "../styles/utopia.space.css";
 import "../styles/utopia.step.css";
 import "../styles/variables.css";
 import "../styles/globals.css";
+import "../styles/globals.vars.css";
+
 import UserContext from "@/components/lib/UserContext";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";

@@ -29,7 +29,7 @@ export default function ToolBar({ boardActions }: TProps) {
         <div>
           <ColorSelector />
           <WidthSelector />
-          <ImageUpload />
+          <ImageUpload boardActions={boardActions} />
         </div>
         <div>
           <Button.LowContrast onClick={boardActions.undo}>

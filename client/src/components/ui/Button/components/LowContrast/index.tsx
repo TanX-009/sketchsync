@@ -1,14 +1,22 @@
 import React, { MouseEventHandler, ReactNode } from "react";
-import styles from "./styles.module.css";
 
 interface TProps {
   children: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  className?: string;
 }
 
-export default function LowContrast({ children, onClick }: TProps) {
+export default function LowContrast({
+  children,
+  onClick,
+  className = "",
+}: TProps) {
   return (
-    <button type="button" className={styles.lowContrast} onClick={onClick}>
+    <button
+      type="button"
+      className={"lowContrastClickable " + className}
+      onClick={onClick}
+    >
       {children}
     </button>
   );

@@ -1,0 +1,16 @@
+.loading {
+  width: 1em;
+  height: 1em;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.loading > span {
+  display: block;
+  width: calc(1em / 3.6);
+  height: calc(1em / 3.6);
+  background-color: var(--primary);
+  border-radius: var(--radius);
+}

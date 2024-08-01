@@ -29,7 +29,7 @@ export default function WidthSelector() {
 
   return (
     <motion.div
-      className={styles.widthSelector}
+      className={"lowContrastClickable " + styles.widthSelector}
       initial={false}
       onClick={handleClick}
       animate={isOpen ? "open" : "closed"}

@@ -29,7 +29,7 @@ export default function ColorSelector() {
 
   return (
     <motion.div
-      className={styles.colorSelector}
+      className={"lowContrastClickable " + styles.colorSelector}
       initial={false}
       onClick={handleClick}
       animate={isOpen ? "open" : "closed"}

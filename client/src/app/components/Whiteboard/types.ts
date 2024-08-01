@@ -8,6 +8,8 @@ export interface TImage {
   src: string;
   position: { x: number; y: number };
   size: { width: number; height: number };
+  rotation?: number;
+  scale?: { x: number; y: number };
 }
 
 export interface TActionDrawing {
@@ -21,6 +23,7 @@ export interface TActionImage {
   user: string;
   roomCode: string;
   type: "image";
+  latest: boolean;
   payload: TImage;
 }
 

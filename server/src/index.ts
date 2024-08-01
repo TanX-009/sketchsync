@@ -2,10 +2,21 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import { checkDatabase } from "./pgp";
+import multer from "multer";
+import { renameSync } from "fs";
+import path from "path";
+import cleanUploads from "./utils/cleanUploads";
 
 const app = express();
 app.use(cors()); // Enable CORS for all routes
+
+const upload = multer({
+  dest: "public/uploads/",
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB limit
+});
+
+// Serve static files
+app.use(express.static("public"));
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -14,6 +25,9 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+// █▀ █▀█ █▀▀ █▄▀ █▀▀ ▀█▀ █▀
+// ▄█ █▄█ █▄▄ █░█ ██▄ ░█░ ▄█
 let roomsData = {} as any;
 
 io.on("connection", async (socket) => {
@@ -35,8 +49,8 @@ io.on("connection", async (socket) => {
     (socket as any).room = room;
   });
 
-  socket.on("action", (data) => {
-    socket.broadcast.to(data.roomCode).emit("action", data);
+  socket.on("action_CtoS", (data) => {
+    socket.broadcast.to(data.roomCode).emit("action_StoC", data);
     if (roomsData[data.roomCode] === undefined) roomsData[data.roomCode] = [];
     roomsData[data.roomCode].push(data);
   });
@@ -53,14 +67,32 @@ io.on("connection", async (socket) => {
 
   socket.on("disconnect", () => {
     const room = (socket as any).room;
-    console.log("A user disconnected");
+    console.log("A user disconnected from room:", room);
 
     // Check if the room is empty
     if (room && !io.sockets.adapter.rooms.get(room)?.size) {
       console.log(`Room ${room} is now empty. Deleting room data.`);
+      cleanUploads(room);
       delete roomsData[room];
     }
   });
+});
+
+// █▀▄▀█ █▀▀ ▀█▀ █░█ █▀█ █▀▄ █▀
+// █░▀░█ ██▄ ░█░ █▀█ █▄█ █▄▀ ▄█
+
+app.post("/upload", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const imageUrl = `/uploads/${req.body.roomCode}_${req.file.filename}`;
+  renameSync(
+    req.file.path,
+    path.join("public/uploads", `${req.body.roomCode}_${req.file.filename}`),
+  );
+
+  res.json({ url: imageUrl });
 });
 
 const PORT = process.env.PORT || 4000;

@@ -6,11 +6,16 @@ import ToolBar from "./components/ToolBar";
 import dynamic from "next/dynamic";
 import UserBar from "./components/UserBar";
 import Panel from "@/components/ui/Panel";
-import { TAction } from "./components/Whiteboard/types";
+import { TActionImage } from "./components/Whiteboard/types";
 import { useState } from "react";
+import Loading from "@/components/ui/Loading";
 
 const Whiteboard = dynamic(() => import("./components/Whiteboard"), {
-  loading: () => <Panel>Loading...</Panel>,
+  loading: () => (
+    <Panel>
+      <Loading />
+    </Panel>
+  ),
   ssr: false,
 });
 
@@ -18,6 +23,7 @@ export interface TBoardActions {
   undo: () => void;
   redo: () => void;
   clear: () => void;
+  addImage: (data: TActionImage) => void;
 }
 
 export default function Home() {
@@ -25,6 +31,7 @@ export default function Home() {
     undo: () => {},
     redo: () => {},
     clear: () => {},
+    addImage: (data: TActionImage) => {},
   });
 
   return (
