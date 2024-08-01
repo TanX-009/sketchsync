@@ -4,17 +4,20 @@ import { useEffect, useRef } from "react";
 import Konva from "konva";
 import { Image, Transformer } from "react-konva";
 
+interface TProps {
+  data: TImage;
+  isSelected: boolean;
+  onSelect: () => void;
+  onTransform: (data: TImage) => void;
+}
+
 export default function URLImage({
   data,
+  isSelected,
+  onSelect,
   onTransform,
-}: {
-  data: TImage;
-  onTransform: (data: TImage) => void;
-}) {
-  const [image] = useImage(
-    `${process.env.NEXT_PUBLIC_SERVER_API_URL}${data.src}`,
-  );
-  console.log(`${process.env.NEXT_PUBLIC_SERVER_API_URL}${data.src}`);
+}: TProps) {
+  const [image] = useImage(data.src);
   const imageRef = useRef<Konva.Image>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
@@ -23,21 +26,7 @@ export default function URLImage({
       trRef.current.nodes([imageRef.current]);
       trRef.current.getLayer()?.batchDraw();
     }
-  }, [image]);
-
-  useEffect(() => {
-    if (imageRef.current) {
-      imageRef.current.setAttrs({
-        x: data.position.x,
-        y: data.position.y,
-        width: data.size.width,
-        height: data.size.height,
-        rotation: data.rotation || 0,
-        scaleX: data.scale?.x || 1,
-        scaleY: data.scale?.y || 1,
-      });
-    }
-  }, [data]);
+  }, [image, isSelected]);
 
   return (
     <>
@@ -45,7 +34,16 @@ export default function URLImage({
         image={image}
         ref={imageRef}
         alt={"uploaded image"}
-        draggable
+        x={data.position.x}
+        y={data.position.y}
+        width={data.size.width}
+        height={data.size.height}
+        rotation={data.rotation}
+        scaleX={data.scale.x}
+        scaleY={data.scale.y}
+        draggable={isSelected}
+        onClick={onSelect}
+        onTap={onSelect}
         onDragEnd={(e) => {
           const node = imageRef.current!;
           onTransform({
@@ -53,31 +51,23 @@ export default function URLImage({
             position: { x: node.x(), y: node.y() },
           });
         }}
-        onTransformEnd={() => {
-          const node = imageRef.current!;
-          const scaleX = node.scaleX();
-          const scaleY = node.scaleY();
-          node.scaleX(1);
-          node.scaleY(1);
-          onTransform({
-            ...data,
-            position: { x: node.x(), y: node.y() },
-            size: {
-              width: node.width() * scaleX,
-              height: node.height() * scaleY,
-            },
-            rotation: node.rotation(),
-            scale: { x: scaleX, y: scaleY },
-          });
-        }}
-        onClick={() => {
-          if (trRef.current && imageRef.current) {
-            trRef.current.nodes([imageRef.current]);
-            trRef.current.getLayer()?.batchDraw();
+        onTransformEnd={(e) => {
+          const node = imageRef.current;
+          if (node) {
+            onTransform({
+              ...data,
+              position: { x: node.x(), y: node.y() },
+              size: {
+                width: node.width(),
+                height: node.height(),
+              },
+              rotation: node.rotation(),
+              scale: { x: node.scaleX(), y: node.scaleY() },
+            });
           }
         }}
       />
-      <Transformer ref={trRef} />
+      {isSelected && <Transformer ref={trRef} />}
     </>
   );
 }

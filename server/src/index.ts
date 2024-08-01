@@ -6,6 +6,7 @@ import multer from "multer";
 import { renameSync } from "fs";
 import path from "path";
 import cleanUploads from "./utils/cleanUploads";
+import generateTimestamp from "./utils/generateTimeStamp";
 
 const app = express();
 app.use(cors()); // Enable CORS for all routes
@@ -86,11 +87,9 @@ app.post("/upload", upload.single("image"), (req, res) => {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-  const imageUrl = `/uploads/${req.body.roomCode}_${req.file.filename}`;
-  renameSync(
-    req.file.path,
-    path.join("public/uploads", `${req.body.roomCode}_${req.file.filename}`),
-  );
+  const imageName = `${req.body.roomCode}_${req.file.filename}_${generateTimestamp()}`;
+  const imageUrl = `/uploads/${imageName}`;
+  renameSync(req.file.path, path.join("public/uploads", imageName));
 
   res.json({ url: imageUrl });
 });

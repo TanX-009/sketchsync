@@ -39,7 +39,10 @@ export default function UserBar() {
     <Panel className={styles.userbar}>
       <div>
         {context.user !== "Guest" ? (
-          <Button.LowContrast onClick={handleCopy}>
+          <Button.LowContrast
+            className={styles.copyButton}
+            onClick={handleCopy}
+          >
             {roomButtonText}
           </Button.LowContrast>
         ) : (

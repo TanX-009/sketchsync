@@ -2,6 +2,8 @@
 
 import React, {
   ChangeEvent,
+  Dispatch,
+  SetStateAction,
   useContext,
   useEffect,
   useRef,
@@ -9,7 +11,6 @@ import React, {
 } from "react";
 import Konva from "konva";
 import { Stage, Layer, Line, Image, Transformer } from "react-konva";
-import io from "socket.io-client";
 import styles from "./styles.module.css";
 import {
   TAction,
@@ -25,25 +26,30 @@ import { TBoardActions } from "@/app/page";
 import Cursor from "./components/Cursor";
 import useImage from "use-image";
 import URLImage from "./components/URLImage";
-
-const socket = io("http://192.168.1.10:4000"); // Adjust the URL as needed
+import { Socket } from "socket.io-client";
 
 interface TProps {
-  setBoardActions: Function;
+  actions: TAction[];
+  undoneActions: TAction[];
+  setActions: Function;
+  setUndoneActions: Function;
 }
 
-export default function Whiteboard({ setBoardActions }: TProps) {
-  const [actions, setActions] = useState<TAction[]>([]);
-  const [undoneActions, setUndoneActions] = useState<TAction[]>([]);
-
+export default function Whiteboard({
+  actions,
+  setActions,
+  undoneActions,
+  setUndoneActions,
+}: TProps) {
   const [cursors, setCursors] = useState<TCursors>({});
 
   const isMoving = useRef(false);
   const whiteboardRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState<Array<number>>([0, 0]);
 
+  const [selectedId, selectShape] = useState<string>("");
+
   const { context, setContext } = useContext(UContext) as TContext;
-  console.log(actions);
 
   // █▀▀ ▄▀█ █▄░█ █░█ ▄▀█ █▀   █▀ █ ▀█ █▀▀
   // █▄▄ █▀█ █░▀█ ▀▄▀ █▀█ ▄█   ▄█ █ █▄ ██▄
@@ -76,53 +82,69 @@ export default function Whiteboard({ setBoardActions }: TProps) {
   // █░█ █ █▀ ▀█▀ █▀█ █▀█ █▄█
   // █▀█ █ ▄█ ░█░ █▄█ █▀▄ ░█░
   useEffect(() => {
-    socket.emit("joinRoom", context.roomCode);
-    socket.on("history", (history) => {
+    context.socket.emit("joinRoom", context.roomCode);
+    context.socket.on("history", (history) => {
       setActions(history);
     });
 
     return () => {
-      socket.off("history");
+      context.socket.off("history");
     };
-  }, [context.roomCode]);
+  }, [context.roomCode, context.socket, setActions]);
 
+  // █▀ █▀█ █▀▀ █▄▀ █▀▀ ▀█▀ █▀
+  // ▄█ █▄█ █▄▄ █░█ ██▄ ░█░ ▄█
   useEffect(() => {
-    socket.on("action_StoC", (action: TAction) => {
-      setActions((prevActions) => [...prevActions, action]);
+    context.socket.on("action_StoC", (action: TAction) => {
+      if (action.type === "image") {
+        const updatedActions: TAction[] = actions.map((ac: TAction) => {
+          if (ac.type === "image" && ac.payload.src === action.payload.src) {
+            return { ...ac, latest: false } as TActionImage;
+          }
+          return ac as TAction;
+        });
+        updatedActions.push(action);
+        setActions(updatedActions);
+      } else setActions((prevActions: TAction[]) => [...prevActions, action]);
     });
-    socket.on("update", (actions: TAction[]) => {
+    context.socket.on("update", (actions: TAction[]) => {
       setActions(actions);
     });
-    socket.on("cursorMove", (cursorLocation: TCursorLocation) => {
+    context.socket.on("cursorMove", (cursorLocation: TCursorLocation) => {
       setCursors((prevCursors) => ({
         ...prevCursors,
         [cursorLocation.user]: cursorLocation,
       }));
     });
     return () => {
-      socket.off("action");
-      socket.off("update");
-      socket.off("cursorMove");
+      context.socket.off("action_StoC");
+      context.socket.off("update");
+      context.socket.off("cursorMove");
     };
-  }, []);
+  }, [context.socket, actions, setActions]);
 
   // █ █▄░█ ▀█▀ █▀▀ █▀█ ▄▀█ █▀▀ ▀█▀ █ █▀█ █▄░█
   // █ █░▀█ ░█░ ██▄ █▀▄ █▀█ █▄▄ ░█░ █ █▄█ █░▀█
   const [currentLine, setCurrentLine] = useState<TDrawing | null>(null);
 
-  const handleMouseDown = () => {
+  const handleMouseDown = (e: any) => {
     isMoving.current = true;
 
     // reset undoneActions
-    setUndoneActions([]);
+    if (undoneActions.length > 0) setUndoneActions([]);
 
-    const newLine: TDrawing = {
-      points: [],
-      color: context.currentColor,
-      width: context.currentWidth,
-    };
+    if (e.target.className !== "Image" && e.target.className !== "Rect") {
+      // reset selectedId
+      selectShape("");
 
-    setCurrentLine(newLine);
+      const newLine: TDrawing = {
+        points: [],
+        color: context.currentColor,
+        width: context.currentWidth,
+      };
+
+      setCurrentLine(newLine);
+    }
   };
 
   const handleMouseMove = (e: any) => {
@@ -136,26 +158,23 @@ export default function Whiteboard({ setBoardActions }: TProps) {
       user: context.user,
     };
 
-    socket.emit("cursorMove", cursorLocation);
+    context.socket.emit("cursorMove", cursorLocation);
 
     if (!isMoving.current || !currentLine) {
       return;
     }
 
-    setCurrentLine((prevLine) => {
-      if (prevLine) {
-        const updatedLine = {
-          ...prevLine,
-          points: prevLine.points.concat([point.x, point.y]),
-        };
-        return updatedLine;
-      }
-      return null;
+    if (!currentLine) {
+      setCurrentLine(null);
+    }
+    setCurrentLine({
+      ...currentLine,
+      points: currentLine.points.concat([point.x, point.y]),
     });
   };
 
-  const handleMouseUp = () => {
-    if (currentLine) {
+  const handleMouseUp = (e: any) => {
+    if (currentLine && e.target.className !== "Image") {
       // Create action data
       const actionData: TAction = {
         user: context.user, // Replace with actual user identifier
@@ -165,10 +184,10 @@ export default function Whiteboard({ setBoardActions }: TProps) {
       };
 
       // Update actions state
-      setActions((prevActions) => [...prevActions, actionData]);
+      setActions((prevActions: TAction[]) => [...prevActions, actionData]);
 
       // Emit action data
-      socket.emit("action_CtoS", actionData);
+      context.socket.emit("action_CtoS", actionData);
 
       // Clear the currentLine
       setCurrentLine(null);
@@ -176,6 +195,7 @@ export default function Whiteboard({ setBoardActions }: TProps) {
 
     isMoving.current = false;
   };
+
   const handleImageTransform = (newData: TImage) => {
     const updatedActions: TAction[] = actions.map((action: TAction) => {
       if (action.type === "image" && action.payload.src === newData.src) {
@@ -191,56 +211,13 @@ export default function Whiteboard({ setBoardActions }: TProps) {
       type: "image",
       payload: newData,
     };
-    socket.emit("updateAction", newAction);
-    setActions([...updatedActions, newAction]);
+    context.socket.emit("action_CtoS", newAction);
+
+    updatedActions.push(newAction);
+    setActions(updatedActions);
   };
 
-  // ▄▀█ █▀▀ ▀█▀ █ █▀█ █▄░█ █▀
-  // █▀█ █▄▄ ░█░ █ █▄█ █░▀█ ▄█
-  useEffect(() => {
-    const undo = () => {
-      if (actions.length === 0) return;
-
-      const lastAction = actions[actions.length - 1];
-      if (lastAction.user === context.user) {
-        const newActions = actions.slice(0, actions.length - 1);
-        setUndoneActions([lastAction, ...undoneActions]);
-        socket.emit("update", newActions);
-        setActions(newActions);
-      }
-    };
-
-    const redo = () => {
-      if (undoneActions.length === 0) return;
-
-      const firstUndoneAction = undoneActions[0];
-      if (firstUndoneAction.user === context.user) {
-        const newActions = [...actions, firstUndoneAction];
-        const newUndoneActions = undoneActions.slice(1);
-        setUndoneActions(newUndoneActions);
-        socket.emit("update", newActions);
-        setActions(newActions);
-      }
-    };
-
-    const clear = () => {
-      const filteredActions = actions.filter(
-        (action: TAction) => action.user !== context.user,
-      );
-      socket.emit("update", filteredActions);
-      setActions(filteredActions);
-    };
-
-    const addImage = (imageAction: TActionImage) => {
-      const updatedActions = [...actions, imageAction];
-      socket.emit("update", updatedActions);
-      setActions(updatedActions);
-    };
-
-    setBoardActions({ undo, redo, clear, addImage });
-  }, [actions, context.user, setBoardActions, undoneActions]);
-
-  if (socket.connected) {
+  if (context.socket.connected) {
     return (
       <Panel ref={whiteboardRef} className={styles.whiteboard}>
         <Stage
@@ -272,6 +249,8 @@ export default function Whiteboard({ setBoardActions }: TProps) {
                   <URLImage
                     key={i}
                     data={action.payload}
+                    isSelected={selectedId === action.payload.src}
+                    onSelect={() => selectShape(action.payload.src)}
                     onTransform={handleImageTransform}
                   />
                 );

@@ -6,6 +6,7 @@ import useUploadImage from "@/hooks/uploadImage";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import { TActionImage, TImage } from "@/app/components/Whiteboard/types";
 import { TBoardActions } from "@/app/page";
+import getImageDimensions from "@/components/lib/getImageDimensions";
 
 interface TProps {
   boardActions: TBoardActions;
@@ -25,12 +26,32 @@ export default function ImageUpload({ boardActions }: TProps) {
     formData.append("image", file);
     formData.append("roomCode", context.roomCode);
 
-    const url = await uploadImage(formData);
+    let url = await uploadImage(formData);
+    url = `${process.env.NEXT_PUBLIC_SERVER_API_URL}${url}`;
+
+    let dimensions = { width: 0, height: 0 };
+
+    await getImageDimensions(url)
+      .then((d) => {
+        dimensions = d;
+      })
+      .catch((err) => console.error(err));
+
+    // scale the image down if it's too big
+    let scaledWidth = window.innerWidth / 3;
+    if (scaledWidth > dimensions.width) {
+      scaledWidth = dimensions.width;
+    }
 
     const image: TImage = {
       src: url,
       position: { x: 0, y: 0 },
-      size: { width: 100, height: 100 },
+      size: {
+        width: scaledWidth,
+        height: dimensions.height * (scaledWidth / dimensions.width),
+      },
+      rotation: 0,
+      scale: { x: 1, y: 1 },
     };
     const actionImage: TActionImage = {
       user: context.user,
@@ -39,7 +60,11 @@ export default function ImageUpload({ boardActions }: TProps) {
       latest: true,
       payload: image,
     };
+    context.socket.emit("action_CtoS", actionImage);
     boardActions.addImage(actionImage);
+
+    // clear the file input
+    event.target.value = "";
   };
 
   return (

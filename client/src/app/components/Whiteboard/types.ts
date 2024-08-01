@@ -8,8 +8,8 @@ export interface TImage {
   src: string;
   position: { x: number; y: number };
   size: { width: number; height: number };
-  rotation?: number;
-  scale?: { x: number; y: number };
+  rotation: number;
+  scale: { x: number; y: number };
 }
 
 export interface TActionDrawing {
