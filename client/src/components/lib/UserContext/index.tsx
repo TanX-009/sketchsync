@@ -1,9 +1,9 @@
 "use client";
 
 import React, { Component, createContext } from "react";
-import generateRoomCode from "../generateRoomCode";
 import { Session } from "next-auth";
 import io, { Socket } from "socket.io-client";
+import generateRoomCode from "@/lib/generateRoomCode";
 
 const socket: Socket = io(process.env.NEXT_PUBLIC_SERVER_API_URL); // Adjust the URL as needed
 

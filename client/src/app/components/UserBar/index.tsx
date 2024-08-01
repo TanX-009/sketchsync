@@ -1,15 +1,21 @@
 "use client";
 
 import Panel from "@/components/ui/Panel";
-import React, { useContext, useEffect, useState } from "react";
+import React, { RefObject, useContext, useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Button from "@/components/ui/Button";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import JoinButton from "./components/JoinButton";
 import Account from "./components/LoginButton";
 import { signIn } from "next-auth/react";
+import Download from "./components/Download";
+import Konva from "konva";
 
-export default function UserBar() {
+interface TProps {
+  stageRef: RefObject<Konva.Stage>;
+}
+
+export default function UserBar({ stageRef }: TProps) {
   const [roomButtonText, setRoomButtonText] = useState<string>("");
   const { context } = useContext(UContext) as TContext;
 
@@ -39,17 +45,18 @@ export default function UserBar() {
     <Panel className={styles.userbar}>
       <div>
         {context.user !== "Guest" ? (
-          <Button.LowContrast
-            className={styles.copyButton}
+          <p
+            className={"lowContrastClickable " + styles.copyButton}
             onClick={handleCopy}
           >
             {roomButtonText}
-          </Button.LowContrast>
+          </p>
         ) : (
           <Button.LowContrast onClick={() => signIn("keycloak")}>
             Login to colab!
           </Button.LowContrast>
         )}
+        <Download stageRef={stageRef} />
       </div>
       <div>
         {context.user !== "Guest" ? <JoinButton /> : null}

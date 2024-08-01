@@ -10,7 +10,7 @@ import "../styles/globals.vars.css";
 
 import UserContext from "@/components/lib/UserContext";
 import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 interface TProps {
   readonly children: ReactNode;

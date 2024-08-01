@@ -3,6 +3,7 @@
 import React, {
   ChangeEvent,
   Dispatch,
+  RefObject,
   SetStateAction,
   useContext,
   useEffect,
@@ -33,6 +34,7 @@ interface TProps {
   undoneActions: TAction[];
   setActions: Function;
   setUndoneActions: Function;
+  stageRef: RefObject<Konva.Stage>;
 }
 
 export default function Whiteboard({
@@ -40,6 +42,7 @@ export default function Whiteboard({
   setActions,
   undoneActions,
   setUndoneActions,
+  stageRef,
 }: TProps) {
   const [cursors, setCursors] = useState<TCursors>({});
 
@@ -221,6 +224,7 @@ export default function Whiteboard({
     return (
       <Panel ref={whiteboardRef} className={styles.whiteboard}>
         <Stage
+          ref={stageRef}
           width={canvasSize[0]}
           height={canvasSize[1]}
           onMouseDown={handleMouseDown}

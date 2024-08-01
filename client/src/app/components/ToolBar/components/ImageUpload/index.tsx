@@ -6,7 +6,7 @@ import useUploadImage from "@/hooks/uploadImage";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import { TActionImage, TImage } from "@/app/components/Whiteboard/types";
 import { TBoardActions } from "@/app/page";
-import getImageDimensions from "@/components/lib/getImageDimensions";
+import getImageDimensions from "@/lib/getImageDimensions";
 
 interface TProps {
   boardActions: TBoardActions;

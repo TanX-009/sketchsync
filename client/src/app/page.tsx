@@ -7,10 +7,11 @@ import dynamic from "next/dynamic";
 import UserBar from "./components/UserBar";
 import Panel from "@/components/ui/Panel";
 import { TAction, TActionImage } from "./components/Whiteboard/types";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Loading from "@/components/ui/Loading";
 import { TContext, UContext } from "@/components/lib/UserContext";
-import getNth from "@/components/lib/getNth";
+import Konva from "konva";
+import getNth from "@/lib/getNth";
 
 const Whiteboard = dynamic(() => import("./components/Whiteboard"), {
   loading: () => (
@@ -31,6 +32,7 @@ export interface TBoardActions {
 export default function Home() {
   const [actions, setActions] = useState<TAction[]>([]);
   const [undoneActions, setUndoneActions] = useState<TAction[]>([]);
+  const stageRef = useRef<Konva.Stage>(null);
 
   const { context, setContext, updateContext } = useContext(
     UContext,
@@ -115,12 +117,13 @@ export default function Home() {
 
   return (
     <div className={styles.main}>
-      <UserBar />
+      <UserBar stageRef={stageRef} />
       <Whiteboard
         actions={actions}
         setActions={setActions}
         undoneActions={undoneActions}
         setUndoneActions={setUndoneActions}
+        stageRef={stageRef}
       />
       <ToolBar boardActions={boardActions} />
     </div>
