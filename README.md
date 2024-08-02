@@ -4,6 +4,8 @@ Real-time colaborative whiteboard.
 
 ## Demo
 
+https://github.com/TanX-009/sketchsync/blob/main/assets/demo.mp4
+
 ## Setup
 
 - ### Development
@@ -46,6 +48,9 @@ Real-time colaborative whiteboard.
       ```env
       CLIENT_URL="<frontendhosturl>"
       ```
+
+      Install dependencies and start
+      
       ```bash
       cd /path/to/sketchsync/server
       npm install
