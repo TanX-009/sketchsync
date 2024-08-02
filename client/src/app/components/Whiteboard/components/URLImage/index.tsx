@@ -17,7 +17,8 @@ export default function URLImage({
   onSelect,
   onTransform,
 }: TProps) {
-  const [image] = useImage(data.src);
+  const [image] = useImage(data.src, "anonymous");
+
   const imageRef = useRef<Konva.Image>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
