@@ -4,7 +4,7 @@ Real-time colaborative whiteboard.
 
 ## Demo
 
-https://github.com/TanX-009/sketchsync/blob/main/assets/demo.mp4
+https://github.com/user-attachments/assets/183271d7-ebf8-44ca-bf36-e4622f784767
 
 ## Setup
 
