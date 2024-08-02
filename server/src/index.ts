@@ -1,5 +1,6 @@
 import express from "express";
 import http from "http";
+import "dotenv/config";
 import { Server } from "socket.io";
 import cors from "cors";
 import multer from "multer";
@@ -22,7 +23,7 @@ app.use(express.static("public"));
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://192.168.1.10:3000"],
+    origin: [process.env.CLIENT_URL || "http://localhost:3000"],
     methods: ["GET", "POST"],
   },
 });
