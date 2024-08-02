@@ -28,6 +28,7 @@ import Cursor from "./components/Cursor";
 import useImage from "use-image";
 import URLImage from "./components/URLImage";
 import { Socket } from "socket.io-client";
+import Loader from "@/components/ui/Loader";
 
 interface TProps {
   actions: TAction[];
@@ -280,5 +281,11 @@ export default function Whiteboard({
         ))}
       </Panel>
     );
-  } else return <Panel ref={whiteboardRef}>Connecting...</Panel>;
+  } else
+    return (
+      <Panel ref={whiteboardRef} className={styles.loading}>
+        Connecting
+        <Loader />
+      </Panel>
+    );
 }

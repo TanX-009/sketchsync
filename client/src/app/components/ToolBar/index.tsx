@@ -1,8 +1,10 @@
-import React from "react";
+"use client";
+
+import React, { useContext } from "react";
 import styles from "./styles.module.css";
 import {
-  FaCircle,
   FaImage,
+  FaMessage,
   FaPencil,
   FaSquareFull,
   FaTrash,
@@ -17,12 +19,20 @@ import ImageUpload from "./components/ImageUpload";
 import { FaRedo, FaUndoAlt } from "react-icons/fa";
 import { TBoardActions } from "@/app/page";
 import ThemeButton from "./components/ThemeButton";
+import { TContext, UContext } from "@/components/lib/UserContext";
+import Loader from "@/components/ui/Loader";
 
 interface TProps {
   boardActions: TBoardActions;
 }
 
 export default function ToolBar({ boardActions }: TProps) {
+  const { context, updateContext } = useContext(UContext) as TContext;
+
+  const handleChatClick = () => {
+    if (context.user !== "Guest") updateContext({ isChatOpen: true });
+  };
+
   return (
     <div className={styles.toolbar}>
       <Panel className={styles.panel}>
@@ -42,6 +52,11 @@ export default function ToolBar({ boardActions }: TProps) {
             <FaTrash />
           </Button.LowContrast>
           <ThemeButton />
+          {context.user !== "Guest" ? (
+            <Button.LowContrast onClick={handleChatClick}>
+              <FaMessage />
+            </Button.LowContrast>
+          ) : null}
         </div>
       </Panel>
     </div>

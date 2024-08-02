@@ -1,0 +1,81 @@
+.chat {
+  width: 100%;
+  height: 0;
+  padding: var(--sp-4xs);
+  overflow: hidden;
+
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.panel {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: var(--sp-4xs);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header > div {
+  padding: var(--sp-3xs);
+
+  font-size: var(--st-1);
+}
+
+.messages {
+  height: 100%;
+  padding: var(--sp-3xs);
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4xs);
+}
+
+.message {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.user {
+  font-size: var(--st--2);
+}
+
+.messageText {
+  padding: var(--sp-5xs) var(--sp-3xs);
+
+  border-radius: var(--radius);
+
+  background: var(--secondary);
+  color: var(--onSecondary);
+}
+
+.chatInput {
+  padding: var(--sp-4xs);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3xs);
+}
+
+.chatInput > input {
+  width: 100%;
+}
+
+.endOfMessages {
+  height: 0;
+  width: 0;
+}

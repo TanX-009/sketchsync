@@ -6,3 +6,12 @@
 
   position: relative;
 }
+
+.loading {
+  font-size: var(--st-3);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-xs);
+}

@@ -15,4 +15,15 @@
   align-items: center;
   justify-content: flex-start;
   gap: var(--sp-4xs);
+
+  position: relative;
+}
+
+.loading {
+  font-size: var(--st-5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-xs);
 }

@@ -11,7 +11,7 @@ export default function getNth(
       if (array[i][lhs] === rhs && count === nth) {
         return array[i];
       }
-      count++;
+      if (array[i][lhs] === rhs) count++;
     }
   } else {
     let count = 1;
@@ -19,7 +19,7 @@ export default function getNth(
       if (array[i][lhs] === rhs && count === nth) {
         return array[i];
       }
-      count++;
+      if (array[i][lhs] === rhs) count++;
     }
   }
 }

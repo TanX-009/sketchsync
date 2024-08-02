@@ -10,6 +10,7 @@ import Account from "./components/LoginButton";
 import { signIn } from "next-auth/react";
 import Download from "./components/Download";
 import Konva from "konva";
+import Loader from "@/components/ui/Loader";
 
 interface TProps {
   stageRef: RefObject<Konva.Stage>;
@@ -20,10 +21,17 @@ export default function UserBar({ stageRef }: TProps) {
   const { context } = useContext(UContext) as TContext;
 
   useEffect(() => {
-    setRoomButtonText(context.roomCode);
-  }, [context.roomCode]);
+    if (context.user === "Guest") {
+      setRoomButtonText("Login to colab!");
+    } else setRoomButtonText(context.roomCode);
+  }, [context.roomCode, context.user]);
 
   const handleCopy = () => {
+    if (context.user === "Guest") {
+      signIn("keycloak");
+      return;
+    }
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText(context.roomCode)
@@ -44,18 +52,12 @@ export default function UserBar({ stageRef }: TProps) {
   return (
     <Panel className={styles.userbar}>
       <div>
-        {context.user !== "Guest" ? (
-          <p
-            className={"lowContrastClickable " + styles.copyButton}
-            onClick={handleCopy}
-          >
-            {roomButtonText}
-          </p>
-        ) : (
-          <Button.LowContrast onClick={() => signIn("keycloak")}>
-            Login to colab!
-          </Button.LowContrast>
-        )}
+        <div
+          className={"lowContrastClickable " + styles.copyButton}
+          onClick={handleCopy}
+        >
+          {roomButtonText || <Loader />}
+        </div>
         <Download stageRef={stageRef} />
       </div>
       <div>

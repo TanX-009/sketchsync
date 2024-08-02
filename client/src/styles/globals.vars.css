@@ -13,6 +13,8 @@
 
   background: var(--primary);
   color: var(--onPrimary);
+
+  cursor: pointer;
 }
 
 .highContrastClickable:hover {
@@ -42,6 +44,8 @@
 
   background: inherit;
   color: var(--onSurface);
+
+  cursor: pointer;
 }
 
 .lowContrastClickable:hover {
@@ -51,4 +55,25 @@
 
 .lowContrastClickable:active {
   background: var(--surface);
+}
+
+.panel {
+  width: inherit;
+  height: inherit;
+  border: var(--border) solid var(--primaryContainer);
+  border-radius: var(--radius);
+  background: var(--onPrimary);
+}
+
+.textInput {
+  padding: var(--sp-3xs);
+
+  font-size: inherit;
+
+  border: var(--border) solid var(--primary);
+  outline: none;
+  border-radius: var(--radius);
+
+  background: var(--primaryContainer);
+  color: var(--primary);
 }

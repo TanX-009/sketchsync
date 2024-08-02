@@ -5,16 +5,6 @@
   border-radius: var(--radius);
 }
 
-.codeInput {
-  padding: var(--sp-3xs);
-
-  font-size: inherit;
+.joinButton > input {
   text-align: center;
-
-  border: var(--border) solid var(--primary);
-  outline: none;
-  border-radius: var(--radius);
-
-  background: var(--primaryContainer);
-  color: var(--primary);
 }

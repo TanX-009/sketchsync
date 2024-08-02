@@ -66,7 +66,7 @@ export default function JoinButton() {
   return (
     <div className={styles.joinButton}>
       <motion.input
-        className={styles.codeInput}
+        className={"textInput"}
         type="text"
         placeholder="Room code"
         value={codeInput}

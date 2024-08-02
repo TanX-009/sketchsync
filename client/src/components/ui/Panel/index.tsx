@@ -11,7 +11,7 @@ function PanelComponent(
   ref: ForwardedRef<HTMLDivElement>,
 ) {
   return (
-    <div className={styles.panel + " " + className} ref={ref}>
+    <div className={"panel " + className} ref={ref}>
       {children}
     </div>
   );

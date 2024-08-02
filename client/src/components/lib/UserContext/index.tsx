@@ -18,6 +18,7 @@ interface TState {
   user: string;
   roomCode: string;
   socket: Socket;
+  isChatOpen: boolean;
 }
 
 export interface TContext {
@@ -46,6 +47,7 @@ class UserContext extends Component<TProps, TState> {
       roomCode: generateRoomCode(),
       //roomCode: "asdf",
       socket: socket,
+      isChatOpen: false,
     };
   }
 

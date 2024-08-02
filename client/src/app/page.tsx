@@ -8,15 +8,16 @@ import UserBar from "./components/UserBar";
 import Panel from "@/components/ui/Panel";
 import { TAction, TActionImage } from "./components/Whiteboard/types";
 import { useContext, useEffect, useRef, useState } from "react";
-import Loading from "@/components/ui/Loading";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import Konva from "konva";
 import getNth from "@/lib/getNth";
+import Chat from "@/components/chat";
+import Loader from "@/components/ui/Loader";
 
 const Whiteboard = dynamic(() => import("./components/Whiteboard"), {
   loading: () => (
-    <Panel>
-      <Loading />
+    <Panel className={styles.loading}>
+      <Loader />
     </Panel>
   ),
   ssr: false,
@@ -126,6 +127,7 @@ export default function Home() {
         stageRef={stageRef}
       />
       <ToolBar boardActions={boardActions} />
+      <Chat />
     </div>
   );
 }

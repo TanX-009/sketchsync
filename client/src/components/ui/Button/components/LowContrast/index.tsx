@@ -4,16 +4,18 @@ interface TProps {
   children: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   className?: string;
+  type?: "submit" | "button";
 }
 
 export default function LowContrast({
   children,
   onClick,
   className = "",
+  type = "button",
 }: TProps) {
   return (
     <button
-      type="button"
+      type={type}
       className={"lowContrastClickable " + className}
       onClick={onClick}
     >
