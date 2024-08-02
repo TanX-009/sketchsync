@@ -30,7 +30,8 @@ export default function ToolBar({ boardActions }: TProps) {
   const { context, updateContext } = useContext(UContext) as TContext;
 
   const handleChatClick = () => {
-    if (context.user !== "Guest") updateContext({ isChatOpen: true });
+    if (context.user !== "Guest" && context.socket.connected)
+      updateContext({ isChatOpen: true });
   };
 
   return (

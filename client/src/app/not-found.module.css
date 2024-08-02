@@ -1,0 +1,17 @@
+.notfound {
+  width: 100%;
+  height: 100%;
+  padding: var(--sp-4xs);
+  font-size: var(--st-3);
+}
+
+.notfound > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.notfound a {
+  text-decoration: none;
+}
