@@ -49,6 +49,7 @@ export default function Chat() {
       variants={{
         open: {
           height: "100%",
+          padding: "var(--sp-4xs)",
           transition: {
             duration: 0.3,
             ease: "easeOut",
@@ -56,6 +57,7 @@ export default function Chat() {
         },
         close: {
           height: 0,
+          padding: 0,
           transition: {
             duration: 0.2,
             ease: "easeOut",
