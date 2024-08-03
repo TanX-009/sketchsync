@@ -7,6 +7,7 @@ import { TContext, UContext } from "../lib/UserContext";
 import { motion } from "framer-motion";
 import { IoClose, IoSend } from "react-icons/io5";
 import Button from "../ui/Button";
+import { IoMdChatbubbles } from "react-icons/io";
 
 interface TMessage {
   user: string;
@@ -73,19 +74,26 @@ export default function Chat() {
           </Button.HighContrast>
         </div>
         <div className={styles.messages}>
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={styles.message}
-              style={{
-                alignItems:
-                  msg.user === context.user ? "flex-end" : "flex-start",
-              }}
-            >
-              <span className={styles.user}>{msg.user}</span>
-              <span className={styles.messageText}>{msg.message}</span>
+          {messages.length !== 0 ? (
+            messages.map((msg, index) => (
+              <div
+                key={index}
+                className={styles.message}
+                style={{
+                  alignItems:
+                    msg.user === context.user ? "flex-end" : "flex-start",
+                }}
+              >
+                <span className={styles.user}>{msg.user}</span>
+                <span className={styles.messageText}>{msg.message}</span>
+              </div>
+            ))
+          ) : (
+            <div className={styles.noMessages}>
+              <IoMdChatbubbles />
+              No messages yet.
             </div>
-          ))}
+          )}
           <div className={styles.endOfMessages} ref={endOfMessagesRef}></div>
         </div>
         <form className={styles.chatInput} onSubmit={handleSubmit}>

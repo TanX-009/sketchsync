@@ -11,7 +11,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import Konva from "konva";
 import getNth from "@/lib/getNth";
-import Chat from "@/components/chat";
+import Chat from "@/components/Chat";
 import Loader from "@/components/ui/Loader";
 
 const Whiteboard = dynamic(() => import("./components/Whiteboard"), {
