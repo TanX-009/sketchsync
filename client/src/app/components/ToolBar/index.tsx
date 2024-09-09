@@ -30,8 +30,7 @@ export default function ToolBar({ boardActions }: TProps) {
   const { context, updateContext } = useContext(UContext) as TContext;
 
   const handleChatClick = () => {
-    if (context.user !== "Guest" && context.socket.connected)
-      updateContext({ isChatOpen: true });
+    if (context.socket.connected) updateContext({ isChatOpen: true });
   };
 
   return (
@@ -53,11 +52,9 @@ export default function ToolBar({ boardActions }: TProps) {
             <FaTrash />
           </Button.LowContrast>
           <ThemeButton />
-          {context.user !== "Guest" ? (
-            <Button.LowContrast onClick={handleChatClick}>
-              <FaMessage />
-            </Button.LowContrast>
-          ) : null}
+          <Button.LowContrast onClick={handleChatClick}>
+            <FaMessage />
+          </Button.LowContrast>
         </div>
       </Panel>
     </div>

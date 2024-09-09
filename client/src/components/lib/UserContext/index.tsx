@@ -1,15 +1,14 @@
 "use client";
 
 import React, { Component, createContext } from "react";
-import { Session } from "next-auth";
 import io, { Socket } from "socket.io-client";
 import generateRoomCode from "@/lib/generateRoomCode";
+import generateUsername from "@/lib/generateUsername";
 
 const socket: Socket = io(process.env.NEXT_PUBLIC_SERVER_API_URL); // Adjust the URL as needed
 
 interface TProps {
   readonly children: React.ReactNode;
-  session: Session | null;
 }
 interface TState {
   primary: string;
@@ -35,20 +34,23 @@ const UContext = createContext<TContext | null>(null);
 class UserContext extends Component<TProps, TState> {
   constructor(props: TProps) {
     super(props);
-    let user = "Guest";
-    if (props.session && typeof props.session?.user?.name === "string") {
-      user = props.session.user.name;
-    }
     this.state = {
       primary: "grey",
       currentColor: "grey",
       currentWidth: 10,
-      user: user,
+      user: "Guest",
       roomCode: generateRoomCode(),
       //roomCode: "asdf",
       socket: socket,
       isChatOpen: false,
     };
+  }
+
+  componentDidMount(): void {
+    this.setState({
+      ...this.state,
+      user: generateUsername(),
+    });
   }
 
   render() {

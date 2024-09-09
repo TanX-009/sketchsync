@@ -6,8 +6,6 @@ import styles from "./styles.module.css";
 import Button from "@/components/ui/Button";
 import { TContext, UContext } from "@/components/lib/UserContext";
 import JoinButton from "./components/JoinButton";
-import Account from "./components/LoginButton";
-import { signIn } from "next-auth/react";
 import Download from "./components/Download";
 import Konva from "konva";
 import Loader from "@/components/ui/Loader";
@@ -21,17 +19,10 @@ export default function UserBar({ stageRef }: TProps) {
   const { context } = useContext(UContext) as TContext;
 
   useEffect(() => {
-    if (context.user === "Guest") {
-      setRoomButtonText("Login to colab!");
-    } else setRoomButtonText(context.roomCode);
-  }, [context.roomCode, context.user]);
+    setRoomButtonText(context.roomCode);
+  }, [context.roomCode]);
 
   const handleCopy = () => {
-    if (context.user === "Guest") {
-      signIn("keycloak");
-      return;
-    }
-
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText(context.roomCode)
@@ -49,6 +40,7 @@ export default function UserBar({ stageRef }: TProps) {
       console.error("Clipboard API is not availabe!");
     }
   };
+
   return (
     <Panel className={styles.userbar}>
       <div>
@@ -61,8 +53,8 @@ export default function UserBar({ stageRef }: TProps) {
         <Download stageRef={stageRef} />
       </div>
       <div>
-        {context.user !== "Guest" ? <JoinButton /> : null}
-        <Account />
+        <JoinButton />
+        <div className={"lowContrastClickable"}>{context.user}</div>
       </div>
     </Panel>
   );

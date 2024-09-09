@@ -21,10 +21,10 @@ export default function WidthSelector() {
   const { context } = useContext(UContext) as TContext;
 
   const handleClick = () => {
-    setIsOpen(true);
+    setIsOpen((val) => !val);
     setTimeout(() => {
-      setIsOpen(false);
-    }, 5000);
+      if (isOpen) setIsOpen(false);
+    }, 10000);
   };
 
   return (

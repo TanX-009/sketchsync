@@ -9,8 +9,6 @@ import "../styles/globals.css";
 import "../styles/globals.vars.css";
 
 import UserContext from "@/components/lib/UserContext";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
 
 interface TProps {
   readonly children: ReactNode;
@@ -24,11 +22,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: TProps) {
-  const session = await getServerSession(authOptions);
   return (
     <html lang="en">
       <body className={inter.className}>
-        <UserContext session={session}>{children}</UserContext>
+        <UserContext>{children}</UserContext>
       </body>
     </html>
   );
