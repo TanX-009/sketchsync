@@ -1,5 +1,4 @@
 import React, { ForwardedRef, forwardRef, ReactNode } from "react";
-import styles from "./styles.module.css";
 
 interface TProps {
   readonly children: ReactNode;

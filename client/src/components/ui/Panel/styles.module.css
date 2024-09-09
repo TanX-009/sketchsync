@@ -1,7 +1,0 @@
-.panel {
-  width: inherit;
-  height: inherit;
-  border: var(--border) solid var(--primaryContainer);
-  border-radius: var(--radius);
-  background: var(--onPrimary);
-}
