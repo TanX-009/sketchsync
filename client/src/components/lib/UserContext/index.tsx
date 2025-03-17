@@ -5,10 +5,6 @@ import io, { Socket } from "socket.io-client";
 import generateRoomCode from "@/lib/generateRoomCode";
 import generateUsername from "@/lib/generateUsername";
 
-const socket: Socket = io(process.env.NEXT_PUBLIC_SERVER_API_URL, {
-  path: process.env.NEXT_PUBLIC_SERVER_API_PATH,
-}); // Adjust the URL as needed
-
 interface TProps {
   readonly children: React.ReactNode;
 }
@@ -35,6 +31,10 @@ const UContext = createContext<TContext | null>(null);
 
 class UserContext extends Component<TProps, TState> {
   constructor(props: TProps) {
+    const socket: Socket = io(process.env.NEXT_PUBLIC_SERVER_API_URL, {
+      path: process.env.NEXT_PUBLIC_SERVER_API_PATH,
+    });
+
     super(props);
     this.state = {
       primary: "grey",
@@ -49,9 +49,13 @@ class UserContext extends Component<TProps, TState> {
   }
 
   componentDidMount(): void {
+    const socket: Socket = io(process.env.NEXT_PUBLIC_SERVER_API_URL, {
+      path: process.env.NEXT_PUBLIC_SERVER_API_PATH,
+    });
     this.setState({
       ...this.state,
       user: generateUsername(),
+      socket: socket,
     });
   }
 
