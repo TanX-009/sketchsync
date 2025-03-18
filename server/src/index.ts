@@ -11,8 +11,6 @@ import cleanUploads from "./utils/cleanUploads";
 import generateTimestamp from "./utils/generateTimeStamp";
 import { error } from "console";
 
-const isDev = process.env.NODE_ENV === "development";
-
 const app = express();
 app.use(cors()); // Enable CORS for all routes
 
@@ -24,28 +22,15 @@ const upload = multer({
 // Serve static files
 app.use(express.static("public"));
 
-//const server = http.createServer(app);
-
-let server;
-
-if (isDev) {
-  server = http.createServer(app);
-} else {
-  if (!process.env.SSL_KEY || !process.env.SSL_CERT) {
-    throw error("SSL_KEY or SSL_CERT not found in env!");
-  }
-  const options = {
-    key: readFileSync(process.env.SSL_KEY),
-    cert: readFileSync(process.env.SSL_CERT),
-  };
-  server = https.createServer(options, app);
-}
+const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
     origin: [process.env.CLIENT_URL || "http://localhost:3000"],
     methods: ["GET", "POST"],
+    credentials: true,
   },
+  transports: ["websocket", "polling"],
 });
 
 // █▀ █▀█ █▀▀ █▄▀ █▀▀ ▀█▀ █▀
