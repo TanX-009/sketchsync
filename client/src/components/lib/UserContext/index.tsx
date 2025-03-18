@@ -6,8 +6,7 @@ import generateRoomCode from "@/lib/generateRoomCode";
 import generateUsername from "@/lib/generateUsername";
 
 const socket: Socket = io(process.env.NEXT_PUBLIC_SERVER_API_URL, {
-  path: process.env.NEXT_PUBLIC_SERVER_API_PATH,
-  transports: ["websocket", "polling"],
+  path: process.env.NEXT_PUBLIC_SERVER_SOCKET_PATH,
 });
 
 interface TProps {
